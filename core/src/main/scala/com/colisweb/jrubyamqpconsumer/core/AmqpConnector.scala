@@ -65,9 +65,12 @@ object AmqpConnector {
             case Ack =>
               logger.info(s"ack message ${commitableMessage.message.envelope} from $queueName")
               commitableMessage.ack()
-            case NoAck =>
-              logger.info(s"no-ack message ${commitableMessage.message.envelope} from $queueName")
-              Future.successful(Done)
+            case NackWithRequeue =>
+              logger.info(s"nack with requeue for message ${commitableMessage.message.envelope} from $queueName")
+              commitableMessage.nack(requeue = true)
+            case NackWithoutRequeue =>
+              logger.info(s"nack without requeue for message ${commitableMessage.message.envelope} from $queueName")
+              commitableMessage.nack(requeue = false)
           }
         }
         .mapError {

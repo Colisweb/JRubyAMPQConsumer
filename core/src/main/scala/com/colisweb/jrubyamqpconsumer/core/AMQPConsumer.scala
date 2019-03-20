@@ -19,6 +19,7 @@ object AMQPConsumer {
   }
 
   sealed trait AckBehavior
-  case object Ack   extends AckBehavior
-  case object NoAck extends AckBehavior
+  case object Ack                extends AckBehavior
+  case object NackWithRequeue    extends AckBehavior
+  case object NackWithoutRequeue extends AckBehavior
 }

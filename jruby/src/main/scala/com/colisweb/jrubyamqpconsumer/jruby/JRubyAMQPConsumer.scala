@@ -57,6 +57,7 @@ object JRubyAMQPConsumer {
     error.andThen(_ => ())
   )
 
-  def ack: AMQPConsumer.Ack.type     = AMQPConsumer.Ack
-  def noAck: AMQPConsumer.NoAck.type = AMQPConsumer.NoAck
+  def ack: AMQPConsumer.Ack.type                               = AMQPConsumer.Ack
+  def nackWithRequeue: AMQPConsumer.NackWithRequeue.type       = AMQPConsumer.NackWithRequeue
+  def nackWithoutRequeue: AMQPConsumer.NackWithoutRequeue.type = AMQPConsumer.NackWithoutRequeue
 }
