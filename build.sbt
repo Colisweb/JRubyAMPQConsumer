@@ -10,21 +10,25 @@ val testKitLibs = Seq(
   "org.scalatest"  %% "scalatest"  % "3.0.7",
 ).map(_ % Test)
 
-lazy val root = Project(id = "JRubyAMPQConsumer", base = file("."))
+lazy val root = Project(id = "JRubyAMQPConsumer", base = file("."))
   .settings(moduleName := "root")
   .settings(noPublishSettings: _*)
-  .aggregate(core)
-  .dependsOn(core)
+  .aggregate(core, jruby)
+  .dependsOn(core, jruby)
 
 lazy val core =
   project
-    .settings(moduleName := "JRubyAMPQConsumer")
+    .settings(moduleName := "JRubyAMQPConsumer")
     .settings(
       libraryDependencies ++= Seq(
-        "com.lightbend.akka" %% "akka-stream-alpakka-amqp" % "1.0-M3"
+        "com.lightbend.akka"    %% "akka-stream-alpakka-amqp" % "0.20"
       ) ++ testKitLibs
     )
 
+lazy val jruby =
+  project
+    .settings(moduleName := "JRubyAMQPConsumerAdapter")
+    .dependsOn(core)
 
 /**
   * Copied from Cats
@@ -39,14 +43,14 @@ inThisBuild(
   List(
     credentials += Credentials(Path.userHome / ".bintray" / ".credentials"),
     licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
-    homepage := Some(url("https://github.com/Colisweb/JRubyAMPQConsumer")),
+    homepage := Some(url("https://github.com/Colisweb/JRubyAMQPConsumer")),
     bintrayOrganization := Some("colisweb"),
     bintrayReleaseOnPublish := true,
     publishMavenStyle := true,
     pomExtra := (
       <scm>
-        <url>git@github.com:Colisweb/JRubyAMPQConsumer.git</url>
-        <connection>scm:git:git@github.com:Colisweb/JRubyAMPQConsumer.git</connection>
+        <url>git@github.com:Colisweb/JRubyAMQPConsumer.git</url>
+        <connection>scm:git:git@github.com:Colisweb/JRubyAMQPConsumer.git</connection>
       </scm>
         <developers>
           <developer>

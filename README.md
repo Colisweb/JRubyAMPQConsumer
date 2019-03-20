@@ -1,1 +1,1 @@
-# JRubyAMPQConsumer
+# JRubyAMQPConsumer
