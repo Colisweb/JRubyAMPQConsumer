@@ -58,7 +58,7 @@ class MessageHandlerTest extends WordSpec with Matchers with MockitoFixture with
     }
   }
 
-  private def mockSetup = {
+  private final def mockSetup = {
     val incommingMessage = mock[IncomingMessage]
 
     val commitableMessage = mock[CommittableIncomingMessage]

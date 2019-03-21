@@ -15,7 +15,7 @@ import scala.util.control.NonFatal
 
 object AmqpConnector {
 
-  def run(
+  final def run(
       config: Config,
       logger: Logger,
       queueName: String,
@@ -74,4 +74,4 @@ object AmqpConnector {
   }
 }
 
-class AmqpConnector
+final class AmqpConnector

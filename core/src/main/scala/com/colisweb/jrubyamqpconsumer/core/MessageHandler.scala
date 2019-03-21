@@ -7,7 +7,7 @@ import com.colisweb.jrubyamqpconsumer.core.AMQPConsumer._
 import scala.concurrent.Future
 
 object MessageHandler {
-  def handle(
+  final def handle(
       logger: Logger,
       queueName: String,
       processMessage: String => AckBehavior
