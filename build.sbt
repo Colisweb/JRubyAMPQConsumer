@@ -21,7 +21,7 @@ lazy val core =
     .settings(moduleName := "JRubyAMQPConsumer")
     .settings(
       libraryDependencies ++= Seq(
-        "com.lightbend.akka"    %% "akka-stream-alpakka-amqp" % "0.20"
+        "com.lightbend.akka" %% "akka-stream-alpakka-amqp" % "0.20"
       ) ++ testKitLibs
     )
 
