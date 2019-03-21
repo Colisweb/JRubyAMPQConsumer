@@ -15,7 +15,12 @@ import scala.util.control.NonFatal
 
 object AmqpConnector {
 
-  def run(config: Config, logger: Logger, queueName: String, processMessage: String => AckBehavior): Unit = {
+  def run(
+      config: Config,
+      logger: Logger,
+      queueName: String,
+      messageHandler: CommittableIncomingMessage => Future[Done]
+  ): Unit = {
 
     val system: ActorSystem                      = ActorSystem("AmqpConnector")
     implicit val materializer: ActorMaterializer = ActorMaterializer()(system)
@@ -44,7 +49,7 @@ object AmqpConnector {
       configuredProvider
     }
 
-    def requestSource(queueName: String): Source[CommittableIncomingMessage, NotUsed] = {
+    def requestSource: Source[CommittableIncomingMessage, NotUsed] = {
       AmqpSource.committableSource(
         NamedQueueSourceSettings(connectionProvider, queueName)
           .withDeclarations(QueueDeclaration(name = queueName, durable = true)),
@@ -52,27 +57,9 @@ object AmqpConnector {
       )
     }
 
-    def runAsync(queueName: String, processMessage: String => AckBehavior): Future[Done] = {
-      requestSource(queueName)
-        .mapAsync(1) { commitableMessage =>
-          val message: String = commitableMessage.message.bytes.utf8String
-
-          logger.info(
-            s"Consuming message ${commitableMessage.message.envelope} from $queueName : ${message}"
-          )
-
-          processMessage(message) match {
-            case Ack =>
-              logger.info(s"ack message ${commitableMessage.message.envelope} from $queueName")
-              commitableMessage.ack()
-            case NackWithRequeue =>
-              logger.info(s"nack with requeue for message ${commitableMessage.message.envelope} from $queueName")
-              commitableMessage.nack(requeue = true)
-            case NackWithoutRequeue =>
-              logger.info(s"nack without requeue for message ${commitableMessage.message.envelope} from $queueName")
-              commitableMessage.nack(requeue = false)
-          }
-        }
+    def runAsync: Future[Done] = {
+      requestSource
+        .mapAsync(1) { messageHandler }
         .mapError {
           case NonFatal(error) =>
             val stacktrace = error.getStackTrace.mkString("\n")
@@ -82,7 +69,7 @@ object AmqpConnector {
         .runWith(Sink.ignore)
     }
 
-    Await.result(runAsync(queueName, processMessage), Duration.Inf)
+    Await.result(runAsync, Duration.Inf)
     ()
   }
 }

@@ -15,7 +15,8 @@ object AMQPConsumer {
   final case class Logger(info: String => Unit, error: String => Unit)
 
   def pullMessages(config: Config, logger: Logger, queueName: String)(f: String => AckBehavior): Unit = {
-    AmqpConnector.run(config, logger, queueName, f)
+    val messageHandler = MessageHandler.handle(logger, queueName, f)
+    AmqpConnector.run(config, logger, queueName, messageHandler)
   }
 
   sealed trait AckBehavior

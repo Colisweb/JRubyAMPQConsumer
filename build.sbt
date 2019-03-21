@@ -5,9 +5,9 @@ ThisBuild / scalafmtCheck     := true
 ThisBuild / scalafmtSbtCheck  := true
 
 val testKitLibs = Seq(
-  "org.scalacheck" %% "scalacheck" % "1.14.0",
   "org.scalactic"  %% "scalactic"  % "3.0.7",
   "org.scalatest"  %% "scalatest"  % "3.0.7",
+  "org.mockito" %% "mockito-scala" % "1.2.1"
 ).map(_ % Test)
 
 lazy val root = Project(id = "JRubyAMQPConsumer", base = file("."))
