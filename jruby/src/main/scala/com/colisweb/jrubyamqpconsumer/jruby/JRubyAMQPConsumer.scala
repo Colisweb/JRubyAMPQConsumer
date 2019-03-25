@@ -5,13 +5,13 @@ import com.colisweb.jrubyamqpconsumer.core.AMQPConsumer._
 
 object JRubyAMQPConsumer {
 
-  def pullMessages(
+  def consumeAtLeastOnce(
       config: Config,
       logger: Logger,
       queueName: String,
       f: String => AckBehavior
   ): Unit = {
-    AMQPConsumer.pullMessages(config, logger, queueName)(f)
+    AMQPConsumer.consumeAtLeastOnce(config, logger, queueName)(f)
   }
 
   def config(

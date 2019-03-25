@@ -14,12 +14,12 @@ import scala.util.control.NonFatal
 
 object AMQPConsumer {
 
-  final def pullMessages(config: Config, logger: Logger, queueName: String)(f: String => AckBehavior): Unit = {
+  def consumeAtLeastOnce(config: Config, logger: Logger, queueName: String)(f: String => AckBehavior): Unit = {
     val messageHandler = handle(logger, queueName, f)
     run(config, logger, queueName, messageHandler)
   }
 
-  final def handle(
+  private[core] def handle(
       logger: Logger,
       queueName: String,
       processMessage: String => AckBehavior
@@ -44,7 +44,7 @@ object AMQPConsumer {
       }
     }
 
-  final def run(
+  private[core] def run(
       config: Config,
       logger: Logger,
       queueName: String,
