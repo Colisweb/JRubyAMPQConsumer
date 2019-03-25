@@ -8,6 +8,7 @@ import com.colisweb.jrubyamqpconsumer.core.AMQPConsumer.{AckBehavior, Logger}
 import org.mockito.integrations.scalatest.MockitoFixture
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{Matchers, WordSpec}
+import com.colisweb.jrubyamqpconsumer.core.AMQPConsumer._
 
 import scala.concurrent.Future
 
@@ -22,7 +23,7 @@ class MessageHandlerTest extends WordSpec with Matchers with MockitoFixture with
 
       when(commitableMessage.ack(anyBoolean)) thenReturn Future.successful(Done)
 
-      whenReady(MessageHandler.handle(logger, queueName, processMessage)(commitableMessage)) { res =>
+      whenReady(handle(logger, queueName, processMessage)(commitableMessage)) { res =>
         verify(commitableMessage, times(1)).ack(anyBoolean)
         verify(commitableMessage, times(0)).nack(anyBoolean, anyBoolean)
         res shouldBe Done
@@ -36,7 +37,7 @@ class MessageHandlerTest extends WordSpec with Matchers with MockitoFixture with
 
       when(commitableMessage.nack(anyBoolean, eqTo(false))) thenReturn Future.successful(Done)
 
-      whenReady(MessageHandler.handle(logger, queueName, processMessage)(commitableMessage)) { res =>
+      whenReady(handle(logger, queueName, processMessage)(commitableMessage)) { res =>
         verify(commitableMessage, times(1)).nack(anyBoolean, eqTo(false))
         verify(commitableMessage, times(0)).ack(anyBoolean)
         res shouldBe Done
@@ -50,7 +51,7 @@ class MessageHandlerTest extends WordSpec with Matchers with MockitoFixture with
 
       when(commitableMessage.nack(anyBoolean, eqTo(true))) thenReturn Future.successful(Done)
 
-      whenReady(MessageHandler.handle(logger, queueName, processMessage)(commitableMessage)) { res =>
+      whenReady(handle(logger, queueName, processMessage)(commitableMessage)) { res =>
         verify(commitableMessage, times(1)).nack(anyBoolean, eqTo(true))
         verify(commitableMessage, times(0)).ack(anyBoolean)
         res shouldBe Done

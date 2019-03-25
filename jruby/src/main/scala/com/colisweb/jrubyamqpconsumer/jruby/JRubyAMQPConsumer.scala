@@ -1,63 +1,45 @@
 package com.colisweb.jrubyamqpconsumer.jruby
 
 import com.colisweb.jrubyamqpconsumer.core.AMQPConsumer
+import com.colisweb.jrubyamqpconsumer.core.AMQPConsumer._
 
 object JRubyAMQPConsumer {
 
   def pullMessages(
       config: Config,
-      logger: AMQPConsumer.Logger,
+      logger: Logger,
       queueName: String,
-      f: String => AMQPConsumer.AckBehavior
+      f: String => AckBehavior
   ): Unit = {
-
-    val amqpConsumerConfig = AMQPConsumer.Config(
-      host = config.host,
-      port = config.port,
-      virtualHost = Option.apply(config.virtualHost),
-      requestBufferSize = config.requestBufferSize,
-      credentials = Option.apply(
-        AMQPConsumer.Credentials(
-          config.credentials.username,
-          config.credentials.password,
-        )
-      )
-    )
-    AMQPConsumer.pullMessages(amqpConsumerConfig, logger, queueName)(f)
+    AMQPConsumer.pullMessages(config, logger, queueName)(f)
   }
-
-  final case class Config(
-      host: String,
-      port: Int,
-      virtualHost: String,
-      requestBufferSize: Int,
-      credentials: AMQPConsumer.Credentials
-  )
-
-  def credentials(username: String, password: String): AMQPConsumer.Credentials =
-    AMQPConsumer.Credentials(username, password)
 
   def config(
       host: String,
       port: Int,
-      virtualHost: String,
+      virtualHost: String, // Could be nil
       requestBufferSize: Int,
-      credentials: AMQPConsumer.Credentials
+      userName: String, // Could be nil
+      password: String // Could be nil
   ): Config =
     Config(
-      host,
-      port,
-      virtualHost,
-      requestBufferSize,
-      credentials
+      host = host,
+      port = port,
+      virtualHost = Option(virtualHost),
+      requestBufferSize = requestBufferSize,
+      credentials = (userName, password) match {
+        case (null, _) => None
+        case (_, null) => None
+        case _         => Some(Credentials(username = userName, password = password))
+      }
     )
 
-  def logger(info: String => Boolean, error: String => Boolean): AMQPConsumer.Logger = AMQPConsumer.Logger(
+  def logger(info: String => Boolean, error: String => Boolean): Logger = Logger(
     info.andThen(_ => ()),
     error.andThen(_ => ())
   )
 
-  def ack: AMQPConsumer.Ack.type                               = AMQPConsumer.Ack
-  def nackWithRequeue: AMQPConsumer.NackWithRequeue.type       = AMQPConsumer.NackWithRequeue
-  def nackWithoutRequeue: AMQPConsumer.NackWithoutRequeue.type = AMQPConsumer.NackWithoutRequeue
+  def ack: Ack.type                               = Ack
+  def nackWithRequeue: NackWithRequeue.type       = NackWithRequeue
+  def nackWithoutRequeue: NackWithoutRequeue.type = NackWithoutRequeue
 }
