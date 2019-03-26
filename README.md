@@ -1,1 +1,3 @@
 # JRubyAMQPConsumer
+
+Awesome lib
