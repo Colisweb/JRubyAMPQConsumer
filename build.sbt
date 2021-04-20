@@ -1,9 +1,12 @@
+
 ThisBuild / organization      := "com.colisweb"
 ThisBuild / scalaVersion      := "2.12.8"
 ThisBuild / scalafmtOnCompile := true
 ThisBuild / scalafmtCheck     := true
 ThisBuild / scalafmtSbtCheck  := true
-
+ThisBuild / pushRemoteCacheTo := Some(
+  MavenCache("local-cache", baseDirectory.value / sys.env.getOrElse("CACHE_PATH", "sbt-cache"))
+)
 val testKitLibs = Seq(
   "org.scalactic"  %% "scalactic"  % "3.0.7",
   "org.scalatest"  %% "scalatest"  % "3.0.7",
@@ -37,33 +40,4 @@ def noPublishSettings = Seq(
   publish := {},
   publishLocal := {},
   publishArtifact := false
-)
-
-inThisBuild(
-  List(
-    credentials += Credentials(Path.userHome / ".bintray" / ".credentials"),
-    licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
-    homepage := Some(url("https://github.com/Colisweb/JRubyAMQPConsumer")),
-    bintrayOrganization := Some("colisweb"),
-    bintrayReleaseOnPublish := true,
-    publishMavenStyle := true,
-    pomExtra := (
-      <scm>
-        <url>git@github.com:Colisweb/JRubyAMQPConsumer.git</url>
-        <connection>scm:git:git@github.com:Colisweb/JRubyAMQPConsumer.git</connection>
-      </scm>
-        <developers>
-          <developer>
-            <id>guizmaii</id>
-            <name>Jules Ivanic</name>
-            <url>https://www.colisweb.com</url>
-          </developer>
-          <developer>
-            <id>FlorianDoublet</id>
-            <name>Florian Doublet</name>
-            <url>https://www.colisweb.com</url>
-          </developer>
-        </developers>
-      )
-  )
 )

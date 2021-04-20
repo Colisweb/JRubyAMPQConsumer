@@ -1,0 +1,20 @@
+include:
+  - 'https://colisweb-open-source.gitlab.io/ci-common/templates/scala.yml'
+
+compile JRubyAMQPConsumer:
+  extends: .sbt-compile-cross
+
+test core:
+  extends: .sbt-test-cross
+  tags:
+   - aws
+
+version jruby:
+  extends: .version
+  tags:
+    - aws
+
+publish JRubyAMQPConsumer:
+  extends: .sonatype-publish
+  tags:
+    - aws
