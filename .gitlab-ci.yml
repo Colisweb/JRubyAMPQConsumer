@@ -9,7 +9,12 @@ test core:
   tags:
    - aws
 
-version jruby:
+test jruby:
+  extends: .sbt-test-cross
+  tags:
+    - aws
+
+version JRubyAMQPConsumer:
   extends: .version
   tags:
     - aws
